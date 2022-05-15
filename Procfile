@@ -1,0 +1,1 @@
+web: gunicorn sparkforce_backend.wsgi --log-file -
