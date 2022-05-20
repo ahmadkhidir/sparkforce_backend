@@ -27,12 +27,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'sparkforce-backend.herokuapp.com'
+    'sparkforce-backend.herokuapp.com',
+    '127.0.0.1',
+    'joinsparkforce.netlify.app/'
 ]
 
 CORS_ALLOWED_ORIGINS = [
