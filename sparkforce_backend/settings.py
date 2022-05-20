@@ -32,14 +32,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'sparkforce-backend.herokuapp.com',
-    '127.0.0.1',
-    'joinsparkforce.netlify.app/'
+    '127.0.0.1'
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
-    "https://joinsparkforce.netlify.app"
+    "https://joinsparkforce.netlify.app",
+    "http://www.joinsparkforce.com"
 ]
 
 # Application definition
