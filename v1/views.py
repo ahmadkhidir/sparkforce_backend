@@ -13,7 +13,7 @@ class WaitlistSubscribersListView(ListCreateAPIView):
     queryset = WaitlistSubscribers.objects.all()
     serializer_class = WaitlistSubsrcibersSerializers
     permission_classes = [IsAuthenticated]
-    renderer_classes = [JSONRenderer, AdminRenderer]
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
     def create(self, request, *args, **kwargs):
         if self.queryset.filter(email__iexact=request.data['email']):
