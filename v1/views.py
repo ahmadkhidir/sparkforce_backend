@@ -1,6 +1,6 @@
 from rest_framework.generics import ListCreateAPIView
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.renderers import JSONRenderer
+from rest_framework.renderers import JSONRenderer, AdminRenderer
 from rest_framework.response import Response
 from rest_framework.status import HTTP_409_CONFLICT
 
@@ -13,7 +13,7 @@ class WaitlistSubscribersListView(ListCreateAPIView):
     queryset = WaitlistSubscribers.objects.all()
     serializer_class = WaitlistSubsrcibersSerializers
     permission_classes = [IsAuthenticated]
-    # renderer_classes = [JSONRenderer]
+    renderer_classes = [JSONRenderer, AdminRenderer]
 
     def create(self, request, *args, **kwargs):
         if self.queryset.filter(email__iexact=request.data['email']):
