@@ -1,4 +1,11 @@
 from django.db import models
+from django.contrib.auth.models import User
+from django.utils.translation import gettext_lazy as _
+from datetime import timedelta
+
+from .querysets import OTPQueryset
+
+User._meta.get_field('email')._unique = True
 
 
 class WaitlistSubscribers(models.Model):
@@ -12,3 +19,32 @@ class WaitlistSubscribers(models.Model):
 
     class Meta:
         verbose_name_plural = "Waitlist subscribers's"
+
+
+
+class UserInformation(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(_('Phone Number'), max_length=15)
+    AGE_CHOICES = (('Young','18 - 25'), ('Youth', '25 - 50'), ('Old', '50 - Above'))
+    age = models.CharField(_('Age Range'), max_length=10, choices=AGE_CHOICES)
+    GENDER_CHOICES = (('M','Male'), ('F', 'Female'))
+    gender = models.CharField(_('Gender'), max_length=1, choices=GENDER_CHOICES)
+    country = models.CharField(_('Country'), max_length=100)
+    state = models.CharField(_('State'), max_length=100)
+    address = models.CharField(_('Home Address'), max_length=300)
+    nationality = models.CharField(_('Nationality'), max_length=100)
+    channel = models.CharField(_('How did you hear about Sparkforce'), max_length=300)
+
+    def __str__(self) -> str:
+        return self.user.email
+
+
+class OTP(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=4)
+    created = models.DateTimeField(auto_created=True, auto_now_add=True)
+    EXPIRES_IN = timedelta(minutes=5)
+    objects = OTPQueryset.as_manager()
+
+    def __str__(self) -> str:
+        return self.user.email

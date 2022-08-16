@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     'sparkforce-backend.herokuapp.com',
@@ -158,3 +158,15 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
     ]
 }
+
+
+# AUTH_USER_MODEL = 'v1.CustomUser'
+AUTHENTICATION_BACKENDS = ['v1.backends.EmailBackend']
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = os.getenv('EMAIL_PORT')
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL')
