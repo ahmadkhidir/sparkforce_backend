@@ -45,13 +45,15 @@ class TestBed(APIView):
 class RegisterView(ListCreateAPIView):
     serializer_class = RegisterSerializer
     queryset = UserInformation.objects.all()
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
 
 class GetOTPView(APIView):
     '''**Send new generated OTP to user**'''
     def post(self, request:HttpRequest):
         data = json.loads(request.body)
-        email = data.get('email')
+        email = data.get('email').lower()
         password = data.get('password')
         user = authenticate(username=email, password=password)
         if user:
@@ -65,7 +67,7 @@ class GetOTPView(APIView):
 class LoginView(APIView):
     def post(self, request:HttpRequest):
         data = json.loads(request.body)
-        email = data.get('email')
+        email = data.get('email').lower()
         password = data.get('password')
         otp = data.get('otp')
         user = authenticate(username=email, password=password)
@@ -82,8 +84,17 @@ class CheckUserValidityView(APIView):
     def post(self, request:HttpRequest):
         data = json.loads(request.body)
         token = data.get('token')
-        print(token)
+        if not token:
+            return Response({'detail': False})
         user = User.objects.filter(auth_token__key=token).first()
         return Response({'detail': True if user else False}, 200)
 
-        
+
+class CheckUserRegistrationConflict(APIView):
+    def post(self, request:HttpRequest):
+        data = json.loads(request.body)
+        email = data.get('email').lower()
+        if not email:
+            return Response({'detail': False})
+        user = User.objects.filter(email=email).first()
+        return Response({'detail': True if user else False}, 200)

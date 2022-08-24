@@ -24,16 +24,16 @@ class WaitlistSubscribers(models.Model):
 
 class UserInformation(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone = models.CharField(_('Phone Number'), max_length=15)
+    phone = models.CharField(_('Phone Number'), max_length=15, blank=True, null=True)
     AGE_CHOICES = (('Young','18 - 25'), ('Youth', '25 - 50'), ('Old', '50 - Above'))
-    age = models.CharField(_('Age Range'), max_length=10, choices=AGE_CHOICES)
+    age = models.CharField(_('Age Range'), max_length=10, choices=AGE_CHOICES, blank=True, null=True)
     GENDER_CHOICES = (('M','Male'), ('F', 'Female'))
-    gender = models.CharField(_('Gender'), max_length=1, choices=GENDER_CHOICES)
+    gender = models.CharField(_('Gender'), max_length=1, choices=GENDER_CHOICES, blank=True, null=True)
     country = models.CharField(_('Country'), max_length=100)
-    state = models.CharField(_('State'), max_length=100)
-    address = models.CharField(_('Home Address'), max_length=300)
+    country_state = models.CharField(_('State'), max_length=100)
+    address = models.CharField(_('Home Address'), max_length=300, blank=True, null=True)
     nationality = models.CharField(_('Nationality'), max_length=100)
-    channel = models.CharField(_('How did you hear about Sparkforce'), max_length=300)
+    channel = models.CharField(_('How did you hear about Sparkforce'), max_length=300, blank=True, null=True)
 
     def __str__(self) -> str:
         return self.user.email
