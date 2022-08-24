@@ -23,15 +23,12 @@ class OTPQueryset(models.QuerySet):
         return False
     
     def send_otp(self, email):
-        print('the email',email)
         token = str(random.randint(1000, 9999))
         try:  
             user = User.objects.filter(email=email).first()
-            print('current',user)
             otp_user = self.filter(user=user).first()
             if otp_user:
                 otp_user.delete()
-                print('I delete', user)
             self.create(user=user, token=token)
             send_mail(
             subject=OTP_TEMPLATE_HEADER, 
@@ -40,7 +37,6 @@ class OTPQueryset(models.QuerySet):
             from_email=None
             )
         except Exception as e:
-            print(e)
             otp_user = self.filter(user=user).first()
             if otp_user:
                 otp_user.delete()
