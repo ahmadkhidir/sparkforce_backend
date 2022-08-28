@@ -87,7 +87,7 @@
         <div class="line"></div>
         <h3>Code</h3>
         <h1>{{ token }}</h1>
-        <p>This token will expire after {{ expired }}</p>
+        <p>This token will expire after {{ expired|time:"i" }} minutes</p>
     </div>
 </body>
 
