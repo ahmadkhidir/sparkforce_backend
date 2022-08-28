@@ -6,6 +6,7 @@ from v1 import views
 app_name = 'v1'
 
 urlpatterns = [
+    path('test_bed/', views.TestBed.as_view()),
     path('waitlist-subscribers/', views.WaitlistSubscribersListView.as_view()),
     path('register/', views.RegisterView.as_view(), name='register'),
     path('get_otp/', views.GetOTPView.as_view(), name='get_otp'),

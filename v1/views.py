@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 from rest_framework.generics import ListCreateAPIView, CreateAPIView
 from rest_framework.permissions import IsAdminUser
@@ -10,6 +11,8 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.http import HttpRequest
+from django.views import View
+from django.shortcuts import render
 
 from .serializers import RegisterSerializer, WaitlistSubsrcibersSerializers
 
@@ -32,14 +35,15 @@ class WaitlistSubscribersListView(ListCreateAPIView):
         return super().create(request, *args, **kwargs)
 
 
-class TestBed(APIView):
+class TestBed(View):
     def get(self, request):
-        # a = User.objects.get(email='khidirahmad05@gmail.com')
-        print(a.check_password('qwerty'), User.check_password(a,'qwertyy'))
-        # User.objects.create(username='akanji', email='khidirahmad055@gmail.com', password='ahmad')
-        a = authenticate(username='khidirahmad05@gmail.com', password='qwerty')
-        print((a))
-        return Response({'a': ''})
+        ctx = {
+            # 'name': 'Princewill',
+            'token': '1234',
+            'expired': datetime.now()
+        }
+        return render(request, 'v1/otp.html', ctx)
+        
 
 # Remember to change to CreateAPIVIew
 class RegisterView(ListCreateAPIView):
