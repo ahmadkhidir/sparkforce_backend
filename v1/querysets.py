@@ -26,7 +26,7 @@ class OTPQueryset(models.QuerySet):
             return True
         return False
 
-    def send_otp(self, email, request):
+    def send_otp(self, email):
         token = str(random.randint(1000, 9999))
         try:
             user = User.objects.filter(email=email).first()
@@ -34,9 +34,7 @@ class OTPQueryset(models.QuerySet):
             if otp_user:
                 otp_user.delete()
             self.create(user=user, token=token)
-            logo = request.scheme + request.META['HTTP_HOST'] + static('v1/images/logo.png')
             ctx = {
-                'logo': logo,
                 'name': user.first_name,
                 'token': token,
                 'expired': self.model.EXPIRES_IN

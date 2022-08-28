@@ -61,7 +61,7 @@ class GetOTPView(APIView):
         password = data.get('password')
         user = authenticate(username=email, password=password)
         if user:
-            res = OTP.objects.send_otp(email, request)
+            res = OTP.objects.send_otp(email)
             if res:
                 return Response({'detail': 'OTP sent'}, 200)
             return Response({'detail': 'Error while sending OTP'}, 503)
