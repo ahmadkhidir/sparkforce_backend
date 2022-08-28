@@ -76,9 +76,7 @@
 
 <body>
     <div class="container">
-        <p>"{{ request.scheme }}://{{ request.META.HTTP_HOST }}{% static 'v1/images/logo.png' %}"</p>
-        <img src="{{ request.scheme }}://{{ request.META.HTTP_HOST }}{% static 'v1/images/logo.png' %}" alt="logo" />
-        <img src="https://d27jswm5an3efw.cloudfront.net/app/uploads/2019/07/insert-image-html.jpg" alt="hello" />
+        <img src="{{ logo }}" alt="logo" />
         {% if name %}
         <h2>Welcome back {{ name }}</h2>
         <p>Kindly find below your authentication token to login into your account</p>
