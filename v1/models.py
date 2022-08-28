@@ -43,7 +43,7 @@ class OTP(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     token = models.CharField(max_length=4)
     created = models.DateTimeField(auto_created=True, auto_now_add=True)
-    EXPIRES_IN = timedelta(minutes=5)
+    EXPIRES_IN = timedelta(minutes=10)
     objects = OTPQueryset.as_manager()
 
     def __str__(self) -> str:

@@ -37,7 +37,7 @@ class OTPQueryset(models.QuerySet):
             ctx = {
                 'name': user.first_name,
                 'token': token,
-                'expired': self.model.EXPIRES_IN
+                'expired': str(self.model.EXPIRES_IN).split(':')[1]
             }
             send_mail(
             subject=OTP_TEMPLATE_HEADER,
