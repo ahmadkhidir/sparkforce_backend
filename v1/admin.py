@@ -7,3 +7,5 @@ from v1 import models
 admin.site.register(models.WaitlistSubscribers)
 admin.site.register(models.UserInformation)
 admin.site.register(models.OTP)
+admin.site.register(models.Rating)
+admin.site.register(models.LearningContent)

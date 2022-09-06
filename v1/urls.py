@@ -13,4 +13,6 @@ urlpatterns = [
     path('login/', views.LoginView.as_view(), name='login'),
     path('check_user_validity/', views.CheckUserValidityView.as_view(), name='check_user_validity'),
     path('check_user_registration_conflict/', views.CheckUserRegistrationConflict.as_view(), name='check_user_registration_conflict'),
+    path('learning_content/', views.LearningContentView.as_view(), name='learningcontent'),
+    path('learning_content/<int:pk>/', views.LearningContentDetailView.as_view(), name='learningcontent-detail'),
 ]
