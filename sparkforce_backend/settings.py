@@ -32,7 +32,8 @@ DEBUG = bool(int(os.getenv('DEBUG')))
 ALLOWED_HOSTS = [
     'sparkforce-backend.herokuapp.com',
     '127.0.0.1',
-    'localhost'
+    'localhost',
+    "sparkforce-app-wc9zp.ondigitalocean.app"
 ]
 
 CORS_ALLOWED_ORIGINS = [
