@@ -1,7 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Sum
 from django.utils.translation import gettext_lazy as _
 from datetime import timedelta
+
+from v1.utils import courses_image_path, hash_words, validate_rate
 
 from .querysets import OTPQueryset
 
@@ -43,8 +46,40 @@ class OTP(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     token = models.CharField(max_length=4)
     created = models.DateTimeField(auto_created=True, auto_now_add=True)
-    EXPIRES_IN = timedelta(minutes=5)
+    EXPIRES_IN = timedelta(minutes=10)
     objects = OTPQueryset.as_manager()
 
     def __str__(self) -> str:
         return self.user.email
+
+
+class LearningContent(models.Model):
+    icon = models.ImageField(_('Content icon'), upload_to=courses_image_path, blank=True, null=True)
+    underlay = models.ImageField(_('Background Image'), upload_to=courses_image_path, blank=True, null=True)
+    title = models.CharField(_('Title'), max_length=200)
+    company = models.CharField(_('Company'), max_length=200)
+    platform = models.CharField(_('Platform'), max_length=200)
+    time_posted = models.DateTimeField(_('Time posted'), auto_now=True)
+    cost = models.PositiveIntegerField(_('Cost in dollar'), default=0)
+    TYPE_OPTION = [('remote', 'remote')]
+    type = models.CharField(_('Employment type'), choices=TYPE_OPTION, max_length=200)
+    visitors = models.ManyToManyField(User)
+    period = models.DateTimeField(_('Period'))
+    about = models.TextField(_('About course'), blank=True, null=True, help_text="This field use markdown")
+    experience = models.TextField(_('What you will learn'), blank=True, null=True, help_text="This field use markdown")
+    skills = models.TextField(_('Skills you will gain'), blank=True, null=True, help_text="This field use markdown")
+    # author = Not yet decided
+
+    @property
+    def total_rates(self):
+        return self.rating_set.all().aggregate(Sum('rate'))['rate__sum'] or 0
+
+
+class Rating(models.Model):
+    user = models.OneToOneField(User, models.CASCADE)
+    learning_content = models.ForeignKey(LearningContent, models.CASCADE)
+    rate = models.PositiveIntegerField(_('Number of rating'), default=1, validators=[validate_rate])
+
+    def __str__(self) -> str:
+        return f"{self.user.email} ({self.rate} star)"
+    

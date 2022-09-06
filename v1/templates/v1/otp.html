@@ -1,0 +1,97 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <title>OTP</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+
+        body {
+            background-color: white;
+            padding: 5%;
+            box-sizing: border-box;
+        }
+
+        .container {
+            box-sizing: border-box;
+            width: 100%;
+            max-width: 500px;
+            padding: 40px;
+            border: 1px solid #DBDEE7;
+            border-radius: 8px;
+        }
+
+        img {
+            height: 18px;
+        }
+
+        h1 {
+            margin: 24px 0;
+            font-size: 50px;
+            font-family: Inter, 'Google Sans', Roboto;
+            text-align: center;
+            color: #1D2432;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-weight: 700;
+            margin-top: 40px;
+            font-size: 20px;
+            font-family: Inter, 'Google Sans';
+            text-align: center;
+            color: #1D2432;
+        }
+
+        h3 {
+            font-weight: 400;
+            margin-bottom: 24px;
+            font-size: 18px;
+            font-family: Inter, 'Google Sans', Roboto;
+            text-align: center;
+            color: #666;
+        }
+
+        p {
+            margin: 24px 5% 0;
+            font-size: 14px;
+            font-family: Inter, 'Google Sans';
+            text-align: center;
+            color: #1D2432;
+            line-height: 1.5;
+        }
+
+        .line {
+            box-sizing: border-box;
+            margin: 24px 5%;
+            border-top: 1px dashed #DBDEE7;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <img src="https://sparkforce-backend.herokuapp.com/static/v1/images/logo.png" alt="logo" />
+        {% if name %}
+        <h2>Welcome back {{ name }}</h2>
+        <p>Kindly find below your authentication token to login into your account</p>
+        {% else %}
+        <h2>Hi</h2>
+        <p>Kindly find below your authentication token to continue your registration</p>
+        {% endif %}
+        <div class="line"></div>
+        <h3>Code</h3>
+        <h1>{{ token }}</h1>
+        <p>This token will expire after {{ expired }} minutes</p>
+    </div>
+</body>
+
+</html>

@@ -1,19 +1,28 @@
+from datetime import datetime
 import json
-from rest_framework.generics import ListCreateAPIView, CreateAPIView
-from rest_framework.permissions import IsAdminUser
+from rest_framework.generics import ListCreateAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.renderers import JSONRenderer, AdminRenderer
 from rest_framework.response import Response
 from rest_framework.status import HTTP_409_CONFLICT
 from rest_framework.views import APIView
 from rest_framework.parsers import JSONParser
 from rest_framework.authtoken.models import Token
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.http import HttpRequest
+from django.views import View
+from django.shortcuts import render
+from v1.filters import LearningContentFilter
+from v1.paginations import LimitOffsetPaginationWeb
 
-from .serializers import RegisterSerializer, WaitlistSubsrcibersSerializers
+from v1.permissions import IsAdminUserOrReadOnly
 
-from .models import OTP, UserInformation, WaitlistSubscribers
+from .serializers import LearningContentSerializer, RegisterSerializer, WaitlistSubsrcibersSerializers
+
+from .models import OTP, LearningContent, UserInformation, WaitlistSubscribers
 
 
 class WaitlistSubscribersListView(ListCreateAPIView):
@@ -32,14 +41,15 @@ class WaitlistSubscribersListView(ListCreateAPIView):
         return super().create(request, *args, **kwargs)
 
 
-class TestBed(APIView):
+class TestBed(View):
     def get(self, request):
-        # a = User.objects.get(email='khidirahmad05@gmail.com')
-        print(a.check_password('qwerty'), User.check_password(a,'qwertyy'))
-        # User.objects.create(username='akanji', email='khidirahmad055@gmail.com', password='ahmad')
-        a = authenticate(username='khidirahmad05@gmail.com', password='qwerty')
-        print((a))
-        return Response({'a': ''})
+        ctx = {
+            # 'name': 'Princewill',
+            'token': '1234',
+            'expired': datetime.now()
+        }
+        return render(request, 'v1/otp.html', ctx)
+        
 
 # Remember to change to CreateAPIVIew
 class RegisterView(ListCreateAPIView):
@@ -98,3 +108,21 @@ class CheckUserRegistrationConflict(APIView):
             return Response({'detail': False})
         user = User.objects.filter(email=email).first()
         return Response({'detail': True if user else False}, 200)
+
+
+class LearningContentView(ListCreateAPIView):
+    permission_classes = [ IsAuthenticated, IsAdminUserOrReadOnly]
+    queryset = LearningContent.objects.all()
+    serializer_class = LearningContentSerializer
+    renderer_classes=[AdminRenderer, JSONRenderer]
+    pagination_class = LimitOffsetPaginationWeb
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ['title', 'company']
+    filterset_class = LearningContentFilter
+
+
+class LearningContentDetailView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [ IsAuthenticated, IsAdminUserOrReadOnly]
+    queryset = LearningContent.objects.all()
+    serializer_class = LearningContentSerializer
+    renderer_classes=[AdminRenderer, JSONRenderer]

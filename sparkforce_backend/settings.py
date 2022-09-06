@@ -28,11 +28,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = bool(int(os.getenv('DEBUG')))
 
 ALLOWED_HOSTS = [
     'sparkforce-backend.herokuapp.com',
-    '127.0.0.1'
+    '127.0.0.1',
+    'localhost'
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -54,14 +55,15 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
     'v1'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -101,8 +103,18 @@ if DEBUG:
         'NAME': BASE_DIR / 'db.sqlite3'
     }
 else:
-    DATABASES['default'] = dj_database_url.config(
-        conn_max_age=600, ssl_require=True)
+    DATABASES["default"] = {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
+    }
+
+# else:
+#     DATABASES['default'] = dj_database_url.config(
+#         conn_max_age=600, ssl_require=True)
 
 
 # Password validation
@@ -145,6 +157,10 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = BASE_DIR / "mediafiles"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -156,7 +172,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
-    ]
+    ],
 }
 
 
@@ -169,4 +185,11 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = os.getenv('EMAIL_PORT')
-EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL')
+EMAIL_USE_SSL = bool(int(os.getenv('EMAIL_USE_SSL')))
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_S3_REGION_NAME = os.getenv("STORAGE_REGION")
+AWS_S3_ENDPOINT_URL = os.getenv("STORAGE_ENDPOINT")
+AWS_SECRET_ACCESS_KEY = os.getenv("STORAGE_KEY")
+AWS_ACCESS_KEY_ID = os.getenv("STORAGE_ID")
+AWS_STORAGE_BUCKET_NAME = os.getenv("STORAGE_NAME")

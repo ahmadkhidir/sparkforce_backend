@@ -6,10 +6,13 @@ from v1 import views
 app_name = 'v1'
 
 urlpatterns = [
+    path('test_bed/', views.TestBed.as_view()),
     path('waitlist-subscribers/', views.WaitlistSubscribersListView.as_view()),
     path('register/', views.RegisterView.as_view(), name='register'),
     path('get_otp/', views.GetOTPView.as_view(), name='get_otp'),
     path('login/', views.LoginView.as_view(), name='login'),
     path('check_user_validity/', views.CheckUserValidityView.as_view(), name='check_user_validity'),
     path('check_user_registration_conflict/', views.CheckUserRegistrationConflict.as_view(), name='check_user_registration_conflict'),
+    path('learning_content/', views.LearningContentView.as_view(), name='learningcontent'),
+    path('learning_content/<int:pk>/', views.LearningContentDetailView.as_view(), name='learningcontent-detail'),
 ]
