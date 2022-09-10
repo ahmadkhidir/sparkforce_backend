@@ -15,14 +15,14 @@ from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.views import View
 from django.shortcuts import render
-from v1.filters import LearningContentFilter
+from v1.filters import LearningContentFilter, VolunteerOpportunityFilter
 from v1.paginations import LimitOffsetPaginationWeb
 
 from v1.permissions import IsAdminUserOrReadOnly
 
-from .serializers import LearningContentSerializer, RegisterSerializer, WaitlistSubsrcibersSerializers
+from .serializers import LearningContentSerializer, RegisterSerializer, VolunteerOpportunitySerializer, WaitlistSubsrcibersSerializers
 
-from .models import OTP, LearningContent, UserInformation, WaitlistSubscribers
+from .models import OTP, LearningContent, UserInformation, VolunteerOpportunity, WaitlistSubscribers
 
 
 class WaitlistSubscribersListView(ListCreateAPIView):
@@ -125,4 +125,22 @@ class LearningContentDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = [ IsAuthenticated, IsAdminUserOrReadOnly]
     queryset = LearningContent.objects.all()
     serializer_class = LearningContentSerializer
+    renderer_classes=[AdminRenderer, JSONRenderer]
+
+
+class VolunteerOpportunityView(ListCreateAPIView):
+    permission_classes = [ IsAuthenticated, IsAdminUserOrReadOnly]
+    queryset = VolunteerOpportunity.objects.all()
+    serializer_class = VolunteerOpportunitySerializer
+    renderer_classes=[AdminRenderer, JSONRenderer]
+    pagination_class = LimitOffsetPaginationWeb
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ['title', 'company']
+    filterset_class = VolunteerOpportunityFilter
+
+
+class VolunteerOpportunityDetailView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [ IsAuthenticated, IsAdminUserOrReadOnly]
+    queryset = VolunteerOpportunity.objects.all()
+    serializer_class = VolunteerOpportunitySerializer
     renderer_classes=[AdminRenderer, JSONRenderer]

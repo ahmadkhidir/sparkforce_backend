@@ -15,4 +15,6 @@ urlpatterns = [
     path('check_user_registration_conflict/', views.CheckUserRegistrationConflict.as_view(), name='check_user_registration_conflict'),
     path('learning_content/', views.LearningContentView.as_view(), name='learningcontent'),
     path('learning_content/<int:pk>/', views.LearningContentDetailView.as_view(), name='learningcontent-detail'),
+    path('volunteer_opportunity/', views.VolunteerOpportunityView.as_view(), name='volunteeropportunity'),
+    path('volunteer_opportunity/<int:pk>/', views.VolunteerOpportunityDetailView.as_view(), name='volunteeropportunity-detail'),
 ]
