@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import LearningContent, UserInformation, WaitlistSubscribers
+from .models import LearningContent, UserInformation, VolunteerOpportunity, WaitlistSubscribers
 
 
 class WaitlistSubsrcibersSerializers(serializers.ModelSerializer):
@@ -73,4 +73,13 @@ class LearningContentSerializer(serializers.HyperlinkedModelSerializer):
     total_rates = serializers.IntegerField(read_only=True)
     class Meta:
         model = LearningContent
+        fields = "__all__"
+
+
+class VolunteerOpportunitySerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    url = serializers.HyperlinkedIdentityField(view_name='v1:learningcontent-detail')
+    visitors = serializers.SlugRelatedField(many=True, read_only=True, slug_field="email")
+    class Meta:
+        model = VolunteerOpportunity
         fields = "__all__"

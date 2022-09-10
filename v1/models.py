@@ -3,13 +3,15 @@ from django.contrib.auth.models import User
 from django.db.models import Sum
 from django.utils.translation import gettext_lazy as _
 from datetime import timedelta
+from django.utils import timezone
 
-from v1.utils import courses_image_path, hash_words, validate_rate
+from v1.utils import courses_image_path, hash_words, opportunities_image_path, validate_rate
 
 from .querysets import OTPQueryset
 
 User._meta.get_field('email')._unique = True
 
+now = timezone.now()
 
 class WaitlistSubscribers(models.Model):
     fullname = models.CharField(max_length=300, blank=False, null=False)
@@ -64,7 +66,8 @@ class LearningContent(models.Model):
     TYPE_OPTION = [('remote', 'remote')]
     type = models.CharField(_('Employment type'), choices=TYPE_OPTION, max_length=200)
     visitors = models.ManyToManyField(User)
-    period = models.DateTimeField(_('Period'))
+    period_start = models.DateTimeField(_('Starting Period'), default='django.utils.timezone.now')
+    period_end = models.DateTimeField(_('Ending Period'))
     about = models.TextField(_('About course'), blank=True, null=True, help_text="This field use markdown")
     experience = models.TextField(_('What you will learn'), blank=True, null=True, help_text="This field use markdown")
     skills = models.TextField(_('Skills you will gain'), blank=True, null=True, help_text="This field use markdown")
@@ -76,10 +79,28 @@ class LearningContent(models.Model):
 
 
 class Rating(models.Model):
-    user = models.OneToOneField(User, models.CASCADE)
+    user = models.ForeignKey(User, models.CASCADE)
     learning_content = models.ForeignKey(LearningContent, models.CASCADE)
     rate = models.PositiveIntegerField(_('Number of rating'), default=1, validators=[validate_rate])
 
     def __str__(self) -> str:
         return f"{self.user.email} ({self.rate} star)"
-    
+
+
+class VolunteerOpportunity(models.Model):
+    icon = models.ImageField(_('Content icon'), upload_to=opportunities_image_path, blank=True, null=True)
+    underlay = models.ImageField(_('Background Image'), upload_to=opportunities_image_path, blank=True, null=True)
+    title = models.CharField(_('Title'), max_length=200)
+    company = models.CharField(_('Company'), max_length=200)
+    address = models.CharField(_('Address'), max_length=500)
+    time_posted = models.DateTimeField(_('Time posted'), auto_now=True)
+    point = models.PositiveIntegerField(_('Point'), default=0)
+    TYPE_OPTION = [('remote', 'remote')]
+    type = models.CharField(_('Employment type'), choices=TYPE_OPTION, max_length=200)
+    visitors = models.ManyToManyField(User)
+    period_start = models.DateTimeField(_('Starting Period'), default='django.utils.timezone.now')
+    period_end = models.DateTimeField(_('Ending Period'))
+    about = models.TextField(_('About course'), blank=True, null=True, help_text="This field use markdown")
+    # experience = models.TextField(_('What you will learn'), blank=True, null=True, help_text="This field use markdown")
+    # skills = models.TextField(_('Skills you will gain'), blank=True, null=True, help_text="This field use markdown")
+    # author = Not yet decided
