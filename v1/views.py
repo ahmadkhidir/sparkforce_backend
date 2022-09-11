@@ -1,6 +1,6 @@
 from datetime import datetime
 import json
-from rest_framework.generics import ListCreateAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListCreateAPIView, CreateAPIView, RetrieveUpdateDestroyAPIView, RetrieveAPIView, ListAPIView
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.renderers import JSONRenderer, AdminRenderer
 from rest_framework.response import Response
@@ -20,7 +20,7 @@ from v1.paginations import LimitOffsetPaginationWeb
 
 from v1.permissions import IsAdminUserOrReadOnly
 
-from .serializers import LearningContentSerializer, RegisterSerializer, VolunteerOpportunitySerializer, WaitlistSubsrcibersSerializers
+from .serializers import LearningContentSerializer, RegisterSerializer, AllUserInformationSerializer, VolunteerOpportunitySerializer, WaitlistSubsrcibersSerializers
 
 from .models import OTP, LearningContent, UserInformation, VolunteerOpportunity, WaitlistSubscribers
 
@@ -144,3 +144,17 @@ class VolunteerOpportunityDetailView(RetrieveUpdateDestroyAPIView):
     queryset = VolunteerOpportunity.objects.all()
     serializer_class = VolunteerOpportunitySerializer
     renderer_classes=[AdminRenderer, JSONRenderer]
+
+
+class UserInformationView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = User.objects.all()
+    serializer_class = AllUserInformationSerializer
+    renderer_classes = [AdminRenderer, JSONRenderer]
+
+    def list(self, request:HttpRequest, *args, **kwargs):
+        user_id = request.user.id
+        user = self.get_queryset().filter(id=user_id).first()
+        ser = self.get_serializer(user)
+        return Response(ser.data)
+    

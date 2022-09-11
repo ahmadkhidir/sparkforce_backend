@@ -83,3 +83,17 @@ class VolunteerOpportunitySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = VolunteerOpportunity
         fields = "__all__"
+
+
+
+class UserInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserInformation
+        exclude = ['id', 'user']
+
+
+class AllUserInformationSerializer(serializers.ModelSerializer):
+    user_information = UserInfoSerializer(read_only=True, source="userinformation")
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'user_information']
