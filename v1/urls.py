@@ -18,4 +18,5 @@ urlpatterns = [
     path('learning_content/<int:pk>/', views.LearningContentDetailView.as_view(), name='learningcontent-detail'),
     path('volunteer_opportunity/', views.VolunteerOpportunityView.as_view(), name='volunteeropportunity'),
     path('volunteer_opportunity/<int:pk>/', views.VolunteerOpportunityDetailView.as_view(), name='volunteeropportunity-detail'),
+    path('change_password/', views.ChangePassword.as_view(), name='change_password'),
 ]

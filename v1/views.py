@@ -157,4 +157,21 @@ class UserInformationView(ListAPIView):
         user = self.get_queryset().filter(id=user_id).first()
         ser = self.get_serializer(user)
         return Response(ser.data)
-    
+
+
+class ChangePassword(APIView):
+    def post(self, request:HttpRequest):
+        if request.user.is_authenticated:
+            print(request.user)
+            data = json.loads(request.body)
+            old_pass = data.get("old_password").strip()
+            new_pass = data.get("new_password").strip()
+            pass_valid = request.user.check_password(old_pass)
+            if pass_valid:
+                request.user.set_password(new_pass)
+                request.user.save()
+                return Response({'detail': True, 'message': 'Password changed successfully'})
+            else:
+                return Response({'detail': False, 'message': 'Invalid password'})
+        else:
+            return Response({'detail': False, 'message': 'Invalid user'})
