@@ -182,7 +182,6 @@ class VerifyForgotPasswordEmailView(APIView):
     def post(self, request):
         data: dict = json.loads(request.body)
         email = data.get('email')
-        print(email)
         if not email:
             return Response({'detail': False, 'message': 'Email field is required'})
         otp = data.get('otp')
@@ -196,7 +195,6 @@ class VerifyForgotPasswordEmailView(APIView):
             })
         else:
             res = OTP.objects.send_otp(email, 'forgot_password')
-            print(res)
             return Response({
                 'detail': res,
                 'message': 'OTP sent successfully' if res else 'Error while sending OTP'
@@ -209,7 +207,6 @@ class ForgotPasswordView(APIView):
         email = data.get('email')
         password = data.get('password')
         otp = data.get('otp')
-        print(email, password, otp)
         user = User.objects.filter(email=email.strip()).first()
         if user:
             res = OTP.objects.validate_otp(
