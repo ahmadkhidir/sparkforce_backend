@@ -45,7 +45,7 @@ class UserInformation(models.Model):
 
 
 class OTP(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     token = models.CharField(max_length=4)
     created = models.DateTimeField(auto_created=True, auto_now_add=True)
     type = models.CharField(max_length=50)
@@ -53,7 +53,7 @@ class OTP(models.Model):
     objects = OTPQueryset.as_manager()
 
     def __str__(self) -> str:
-        return self.user.email
+        return f"{self.user.email} | {self.type}"
 
 
 class LearningContent(models.Model):
