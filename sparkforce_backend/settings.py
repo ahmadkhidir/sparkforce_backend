@@ -187,9 +187,10 @@ EMAIL_HOST = os.getenv('EMAIL_HOST')
 EMAIL_PORT = os.getenv('EMAIL_PORT')
 EMAIL_USE_SSL = bool(int(os.getenv('EMAIL_USE_SSL')))
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-AWS_S3_REGION_NAME = os.getenv("STORAGE_REGION")
-AWS_S3_ENDPOINT_URL = os.getenv("STORAGE_ENDPOINT")
-AWS_SECRET_ACCESS_KEY = os.getenv("STORAGE_KEY")
-AWS_ACCESS_KEY_ID = os.getenv("STORAGE_ID")
-AWS_STORAGE_BUCKET_NAME = os.getenv("STORAGE_NAME")
+if not DEBUG:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    AWS_S3_REGION_NAME = os.getenv("STORAGE_REGION")
+    AWS_S3_ENDPOINT_URL = os.getenv("STORAGE_ENDPOINT")
+    AWS_SECRET_ACCESS_KEY = os.getenv("STORAGE_KEY")
+    AWS_ACCESS_KEY_ID = os.getenv("STORAGE_ID")
+    AWS_STORAGE_BUCKET_NAME = os.getenv("STORAGE_NAME")
