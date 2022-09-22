@@ -48,6 +48,7 @@ class OTP(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     token = models.CharField(max_length=4)
     created = models.DateTimeField(auto_created=True, auto_now_add=True)
+    type = models.CharField(max_length=50)
     EXPIRES_IN = timedelta(minutes=10)
     objects = OTPQueryset.as_manager()
 
@@ -68,6 +69,7 @@ class LearningContent(models.Model):
     visitors = models.ManyToManyField(User)
     period_start = models.DateTimeField(_('Starting Period'), default='django.utils.timezone.now')
     period_end = models.DateTimeField(_('Ending Period'))
+    author = models.CharField(_("Author Name"), max_length=200, null=True, blank=True)
     about = models.TextField(_('About course'), blank=True, null=True, help_text="This field use markdown")
     experience = models.TextField(_('What you will learn'), blank=True, null=True, help_text="This field use markdown")
     skills = models.TextField(_('Skills you will gain'), blank=True, null=True, help_text="This field use markdown")
@@ -100,6 +102,7 @@ class VolunteerOpportunity(models.Model):
     visitors = models.ManyToManyField(User)
     period_start = models.DateTimeField(_('Starting Period'), default='django.utils.timezone.now')
     period_end = models.DateTimeField(_('Ending Period'))
+    author = models.CharField(_("Author Name"), max_length=200, null=True, blank=True)
     about = models.TextField(_('About course'), blank=True, null=True, help_text="This field use markdown")
     # experience = models.TextField(_('What you will learn'), blank=True, null=True, help_text="This field use markdown")
     # skills = models.TextField(_('Skills you will gain'), blank=True, null=True, help_text="This field use markdown")
