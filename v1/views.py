@@ -49,25 +49,27 @@ class TestBed(View):
             'expired': datetime.now()
         }
         return render(request, 'v1/otp.html', ctx)
-        
+
 
 # Remember to change to CreateAPIVIew
 class RegisterView(ListCreateAPIView):
     serializer_class = RegisterSerializer
     queryset = UserInformation.objects.all()
+
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
 
 class GetOTPView(APIView):
     '''**Send new generated OTP to user**'''
-    def post(self, request:HttpRequest):
+
+    def post(self, request: HttpRequest):
         data = json.loads(request.body)
         email = data.get('email').lower()
         password = data.get('password')
         user = authenticate(username=email, password=password)
         if user:
-            res = OTP.objects.send_otp(email)
+            res = OTP.objects.send_otp(email, 'auth')
             if res:
                 return Response({'detail': 'OTP sent'}, 200)
             return Response({'detail': 'Error while sending OTP'}, 503)
@@ -75,14 +77,14 @@ class GetOTPView(APIView):
 
 
 class LoginView(APIView):
-    def post(self, request:HttpRequest):
+    def post(self, request: HttpRequest):
         data = json.loads(request.body)
         email = data.get('email').lower()
         password = data.get('password')
         otp = data.get('otp')
         user = authenticate(username=email, password=password)
         if user:
-            res = OTP.objects.validate_otp(user, otp)
+            res = OTP.objects.validate_otp(user, otp, 'auth')
             if res:
                 token, created = Token.objects.get_or_create(user=user)
                 return Response({'detail': {'token': token.key}}, 200)
@@ -91,7 +93,7 @@ class LoginView(APIView):
 
 
 class CheckUserValidityView(APIView):
-    def post(self, request:HttpRequest):
+    def post(self, request: HttpRequest):
         data = json.loads(request.body)
         token = data.get('token')
         if not token:
@@ -101,7 +103,7 @@ class CheckUserValidityView(APIView):
 
 
 class CheckUserRegistrationConflict(APIView):
-    def post(self, request:HttpRequest):
+    def post(self, request: HttpRequest):
         data = json.loads(request.body)
         email = data.get('email').lower()
         if not email:
@@ -111,10 +113,10 @@ class CheckUserRegistrationConflict(APIView):
 
 
 class LearningContentView(ListCreateAPIView):
-    permission_classes = [ IsAuthenticated, IsAdminUserOrReadOnly]
+    permission_classes = [IsAuthenticated, IsAdminUserOrReadOnly]
     queryset = LearningContent.objects.all()
     serializer_class = LearningContentSerializer
-    renderer_classes=[AdminRenderer, JSONRenderer]
+    renderer_classes = [AdminRenderer, JSONRenderer]
     pagination_class = LimitOffsetPaginationWeb
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     search_fields = ['title', 'company']
@@ -122,17 +124,17 @@ class LearningContentView(ListCreateAPIView):
 
 
 class LearningContentDetailView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [ IsAuthenticated, IsAdminUserOrReadOnly]
+    permission_classes = [IsAuthenticated, IsAdminUserOrReadOnly]
     queryset = LearningContent.objects.all()
     serializer_class = LearningContentSerializer
-    renderer_classes=[AdminRenderer, JSONRenderer]
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
 
 class VolunteerOpportunityView(ListCreateAPIView):
-    permission_classes = [ IsAuthenticated, IsAdminUserOrReadOnly]
+    permission_classes = [IsAuthenticated, IsAdminUserOrReadOnly]
     queryset = VolunteerOpportunity.objects.all()
     serializer_class = VolunteerOpportunitySerializer
-    renderer_classes=[AdminRenderer, JSONRenderer]
+    renderer_classes = [AdminRenderer, JSONRenderer]
     pagination_class = LimitOffsetPaginationWeb
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
     search_fields = ['title', 'company']
@@ -140,10 +142,10 @@ class VolunteerOpportunityView(ListCreateAPIView):
 
 
 class VolunteerOpportunityDetailView(RetrieveUpdateDestroyAPIView):
-    permission_classes = [ IsAuthenticated, IsAdminUserOrReadOnly]
+    permission_classes = [IsAuthenticated, IsAdminUserOrReadOnly]
     queryset = VolunteerOpportunity.objects.all()
     serializer_class = VolunteerOpportunitySerializer
-    renderer_classes=[AdminRenderer, JSONRenderer]
+    renderer_classes = [AdminRenderer, JSONRenderer]
 
 
 class UserInformationView(ListAPIView):
@@ -152,17 +154,16 @@ class UserInformationView(ListAPIView):
     serializer_class = AllUserInformationSerializer
     renderer_classes = [AdminRenderer, JSONRenderer]
 
-    def list(self, request:HttpRequest, *args, **kwargs):
+    def list(self, request: HttpRequest, *args, **kwargs):
         user_id = request.user.id
         user = self.get_queryset().filter(id=user_id).first()
         ser = self.get_serializer(user)
         return Response(ser.data)
 
 
-class ChangePassword(APIView):
-    def post(self, request:HttpRequest):
+class ChangePasswordView(APIView):
+    def post(self, request: HttpRequest):
         if request.user.is_authenticated:
-            print(request.user)
             data = json.loads(request.body)
             old_pass = data.get("old_password").strip()
             new_pass = data.get("new_password").strip()
@@ -175,3 +176,49 @@ class ChangePassword(APIView):
                 return Response({'detail': False, 'message': 'Invalid password'})
         else:
             return Response({'detail': False, 'message': 'Invalid user'})
+
+
+class VerifyForgotPasswordEmailView(APIView):
+    def post(self, request):
+        data: dict = json.loads(request.body)
+        email = data.get('email')
+        print(email)
+        if not email:
+            return Response({'detail': False, 'message': 'Email field is required'})
+        otp = data.get('otp')
+        user = User.objects.filter(email=email.strip()).first()
+        if otp:
+            res = OTP.objects.check_otp(
+                user, otp.strip(), 'forgot_password')
+            return Response({
+                'detail': res,
+                'message': 'OTP successfully validated' if res else 'Error while validating OTP'
+            })
+        else:
+            res = OTP.objects.send_otp(email, 'forgot_password')
+            print(res)
+            return Response({
+                'detail': res,
+                'message': 'OTP sent successfully' if res else 'Error while sending OTP'
+            })
+
+
+class ForgotPasswordView(APIView):
+    def post(self, request):
+        data: dict = json.loads(request.body)
+        email = data.get('email')
+        password = data.get('password')
+        otp = data.get('otp')
+        print(email, password, otp)
+        user = User.objects.filter(email=email.strip()).first()
+        if user:
+            res = OTP.objects.validate_otp(
+                    user, otp.strip(), 'forgot_password')
+            if res:
+                user.set_password(password.strip())
+                user.save()
+                return Response({'detail': True, 'message': 'Password reset successfully'})
+            else:
+                return Response({'detail': False, 'message': 'Error while validating OTP'})
+        else:
+                return Response({'detail': False, 'message': 'User record cannot be found'})

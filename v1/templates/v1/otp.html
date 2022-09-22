@@ -80,12 +80,17 @@
 <body>
     <div class="container">
         <img src="https://sparkforce-app-wc9zp.ondigitalocean.app/static/v1/images/logo.png" alt="logo" />
+        {% if type == 'auth' %}
         {% if name %}
         <h2>Welcome back {{ name }}</h2>
         <p>Kindly find below your authentication token to login into your account</p>
         {% else %}
         <h2>Hi</h2>
         <p>Kindly find below your authentication token to continue your registration</p>
+        {% endif %}
+        {% else %}
+        <h2>Hi {{ name }}</h2>
+        <p>Kindly confirm your OTP to reset your password</p>
         {% endif %}
         <div class="line"></div>
         <h3>Code</h3>
