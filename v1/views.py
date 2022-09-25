@@ -10,7 +10,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.authtoken.models import Token
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, logout
 from django.contrib.auth.models import User
 from django.http import HttpRequest
 from django.views import View
@@ -52,12 +52,21 @@ class TestBed(View):
 
 
 # Remember to change to CreateAPIVIew
-class RegisterView(ListCreateAPIView):
+class RegisterView(CreateAPIView):
     serializer_class = RegisterSerializer
     queryset = UserInformation.objects.all()
 
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
+    # def post(self, request:HttpRequest, *args, **kwargs):
+    #     print(request.user.username, 'suer')
+    #     print(request.body)
+    #     return super().post(request, *args, **kwargs)
+
+
+class LogoutView(APIView):
+    def post(self, request:HttpRequest):
+        logout(request)
+        print('logout')
+        return Response({'detail': True})
 
 
 class GetOTPView(APIView):
@@ -191,7 +200,7 @@ class VerifyForgotPasswordEmailView(APIView):
                 user, otp.strip(), 'forgot_password')
             return Response({
                 'detail': res,
-                'message': 'OTP successfully validated' if res else 'Error while validating OTP'
+                'message': 'OTP successfully validated' if res else 'Invalid OTP'
             })
         else:
             res = OTP.objects.send_otp(email, 'forgot_password')

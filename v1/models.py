@@ -57,6 +57,7 @@ class OTP(models.Model):
 
 
 class LearningContent(models.Model):
+    link = models.CharField(_("Course Link"), max_length=500)
     icon = models.ImageField(_('Content icon'), upload_to=courses_image_path, blank=True, null=True)
     underlay = models.ImageField(_('Background Image'), upload_to=courses_image_path, blank=True, null=True)
     title = models.CharField(_('Title'), max_length=200)
@@ -90,6 +91,7 @@ class Rating(models.Model):
 
 
 class VolunteerOpportunity(models.Model):
+    link = models.CharField(_("Opportunity Link"), max_length=500)
     icon = models.ImageField(_('Content icon'), upload_to=opportunities_image_path, blank=True, null=True)
     underlay = models.ImageField(_('Background Image'), upload_to=opportunities_image_path, blank=True, null=True)
     title = models.CharField(_('Title'), max_length=200)

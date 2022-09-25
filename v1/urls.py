@@ -11,6 +11,7 @@ urlpatterns = [
     path('register/', views.RegisterView.as_view(), name='register'),
     path('get_otp/', views.GetOTPView.as_view(), name='get_otp'),
     path('login/', views.LoginView.as_view(), name='login'),
+    path('logout/', views.LogoutView.as_view(), name='logout'),
     path('user_information/', views.UserInformationView.as_view(), name='user_information'),
     path('check_user_validity/', views.CheckUserValidityView.as_view(), name='check_user_validity'),
     path('check_user_registration_conflict/', views.CheckUserRegistrationConflict.as_view(), name='check_user_registration_conflict'),
